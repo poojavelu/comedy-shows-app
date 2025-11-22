@@ -1,0 +1,17 @@
+{
+  "buildCommand": "cd backend && pip install -r requirements.txt && cd ../frontend && npm install && npm run build",
+  "outputDirectory": "frontend/build",
+  "installCommand": "pip install -r backend/requirements.txt && cd frontend && npm install",
+  "devCommand": "npm start --prefix frontend",
+  "framework": null,
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/frontend/build/index.html"
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+"""
+Comedy Shows Django Project
+"""
