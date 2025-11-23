@@ -16,17 +16,20 @@ A full-stack application for managing and displaying comedy shows with React fro
 ## Tech Stack
 
 **Frontend:**
+
 - React 18
 - React Router for navigation
 - Axios for API calls
 - Vite for build tooling
 
 **Backend:**
+
 - Netlify Functions (Serverless)
 - Direct Airtable API integration
 - Node.js runtime
 
 **Database:**
+
 - Airtable (No-code database)
 
 ## Setup Instructions
@@ -120,11 +123,13 @@ The app is deployed at: **https://silly-naiad-2a93ee.netlify.app**
 2. **Sign up at Netlify**: https://app.netlify.com
 
 3. **Import your project**:
+
    - Click "Add new site" → "Import an existing project"
    - Choose "Deploy with GitHub"
    - Select your forked repository
 
 4. **Add Environment Variables** in Netlify dashboard:
+
    - `AIRTABLE_API_KEY` - Your Airtable personal access token
    - `AIRTABLE_BASE_ID` - Your Airtable base ID
    - `AIRTABLE_TABLE_NAME` - `Shows`
