@@ -45,19 +45,24 @@ function ShowsList() {
 
   return (
     <div className="shows-container">
-      <div className="filter-buttons">
-        <button
-          className={filter === 'upcoming' ? 'active' : ''}
-          onClick={() => setFilter('upcoming')}
-        >
-          Upcoming Shows
-        </button>
-        <button
-          className={filter === 'past' ? 'active' : ''}
-          onClick={() => setFilter('past')}
-        >
-          Past Shows
-        </button>
+      <div className="header-section">
+        <div className="filter-buttons">
+          <button
+            className={filter === 'upcoming' ? 'active' : ''}
+            onClick={() => setFilter('upcoming')}
+          >
+            Upcoming Shows
+          </button>
+          <button
+            className={filter === 'past' ? 'active' : ''}
+            onClick={() => setFilter('past')}
+          >
+            Past Shows
+          </button>
+        </div>
+        <Link to="/admin" className="admin-link">
+          🛠️ Admin Panel
+        </Link>
       </div>
 
       <div className="shows-grid">
