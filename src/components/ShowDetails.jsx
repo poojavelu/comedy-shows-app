@@ -9,6 +9,8 @@ function ShowDetails() {
   const [show, setShow] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [emailLoading, setEmailLoading] = useState(false)
+  const [emailMessage, setEmailMessage] = useState({ type: '', text: '' })
 
   useEffect(() => {
     fetchShow()
@@ -38,6 +40,43 @@ function ShowDetails() {
       hour: 'numeric',
       minute: '2-digit'
     })
+  }
+
+  const handleSendInvite = async () => {
+    setEmailLoading(true)
+    setEmailMessage({ type: '', text: '' })
+
+    try {
+      await axios.post(`${API_BASE_URL}/.netlify/functions/send-email`, {
+        to_email: 'poojavelu23@gmail.com',
+        show_data: {
+          title: show.title,
+          date_time: show.date_time,
+          location: show.location,
+          description: show.description,
+          ticket_url: show.ticket_url || '#'
+        },
+        guest_data: {
+          first_name: 'Guest'
+        }
+      })
+
+      setEmailMessage({ 
+        type: 'success', 
+        text: 'Invitation sent successfully to poojavelu23@gmail.com!' 
+      })
+      
+      setTimeout(() => {
+        setEmailMessage({ type: '', text: '' })
+      }, 5000)
+    } catch (error) {
+      setEmailMessage({ 
+        type: 'error', 
+        text: error.response?.data?.error || 'Failed to send invitation' 
+      })
+    } finally {
+      setEmailLoading(false)
+    }
   }
 
   if (loading) return <div className="loading">Loading show details...</div>
@@ -84,16 +123,19 @@ function ShowDetails() {
           <p>{show.description}</p>
         </div>
         
-        {show.ticket_url && (
-          <a 
-            href={show.ticket_url} 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            className="ticket-button"
-          >
-            Get Tickets
-          </a>
+        {emailMessage.text && (
+          <div className={`message ${emailMessage.type}`}>
+            {emailMessage.text}
+          </div>
         )}
+        
+        <button 
+          onClick={handleSendInvite}
+          className="invite-button"
+          disabled={emailLoading}
+        >
+          {emailLoading ? '✉️ Sending Invitation...' : '✉️ Send Invitation'}
+        </button>
       </div>
     </div>
   )
