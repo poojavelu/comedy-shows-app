@@ -236,7 +236,11 @@ function createAirtableRecord(data) {
       res.on("end", () => {
         try {
           const json = JSON.parse(data);
-          resolve(json);
+          if (res.statusCode >= 400) {
+            reject(new Error(json.error?.message || "Airtable API error"));
+          } else {
+            resolve(json); // Airtable returns the created record directly
+          }
         } catch (e) {
           reject(e);
         }
@@ -286,7 +290,11 @@ function updateAirtableRecord(recordId, data) {
       res.on("end", () => {
         try {
           const json = JSON.parse(data);
-          resolve(json);
+          if (res.statusCode >= 400) {
+            reject(new Error(json.error?.message || "Airtable API error"));
+          } else {
+            resolve(json); // Airtable returns the updated record directly
+          }
         } catch (e) {
           reject(e);
         }
