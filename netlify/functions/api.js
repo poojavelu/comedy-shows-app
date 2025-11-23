@@ -18,12 +18,21 @@ exports.handler = async (event, context) => {
     return { statusCode: 200, headers, body: '' };
   }
 
-  const path = event.path.replace('/.netlify/functions/api', '');
+  // Extract path - handle both direct function calls and redirected paths
+  let path = event.path;
+  if (path.includes('/.netlify/functions/api')) {
+    path = path.replace('/.netlify/functions/api', '');
+  } else if (path.startsWith('/api')) {
+    path = path.replace('/api', '');
+  }
+  
   const method = event.httpMethod;
+  
+  console.log('Path:', path, 'Method:', method);
   
   try {
     // GET /shows - List all shows
-    if (path === '/shows' && method === 'GET') {
+    if ((path === '/shows' || path === '/shows/') && method === 'GET') {
       const filter = event.queryStringParameters?.filter;
       const records = await getAirtableRecords();
       
@@ -56,8 +65,9 @@ exports.handler = async (event, context) => {
     }
 
     // GET /shows/:id - Get single show
-    if (path.match(/^\/shows\/[^\/]+$/) && method === 'GET') {
-      const id = path.split('/')[2];
+    if (path.match(/^\/shows\/[^\/]+\/?$/) && method === 'GET') {
+      const pathParts = path.split('/').filter(p => p);
+      const id = pathParts[pathParts.length - 1];
       const record = await getAirtableRecord(id);
       
       const show = {
