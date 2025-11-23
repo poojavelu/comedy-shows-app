@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import ShowsList from './components/ShowsList'
 import ShowDetails from './components/ShowDetails'
+import AdminPanel from './components/AdminPanel'
 import './App.css'
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
         <Routes>
           <Route path="/" element={<ShowsList />} />
           <Route path="/show/:id" element={<ShowDetails />} />
+          <Route path="/admin" element={<AdminPanel />} />
         </Routes>
       </div>
     </Router>
