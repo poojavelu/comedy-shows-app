@@ -91,26 +91,40 @@ exports.handler = async (event, context) => {
 
     // POST /shows - Create a new show
     if ((path === "/shows" || path === "/shows/") && method === "POST") {
-      const body = JSON.parse(event.body);
-      const record = await createAirtableRecord(body);
+      try {
+        const body = JSON.parse(event.body);
+        console.log("POST request body:", body);
+        const record = await createAirtableRecord(body);
+        console.log("Airtable response:", record);
 
-      const show = {
-        id: record.id,
-        airtable_id: record.id,
-        title: record.fields.title || "",
-        date_time: record.fields.date_time || "",
-        location: record.fields.location || "",
-        description: record.fields.description || "",
-        comedian: record.fields.comedian || "",
-        ticket_price: record.fields.ticket_price || null,
-        ticket_url: record.fields.ticket_url || "",
-      };
+        const show = {
+          id: record.id,
+          airtable_id: record.id,
+          title: record.fields.title || "",
+          date_time: record.fields.date_time || "",
+          location: record.fields.location || "",
+          description: record.fields.description || "",
+          comedian: record.fields.comedian || "",
+          ticket_price: record.fields.ticket_price || null,
+          ticket_url: record.fields.ticket_url || "",
+        };
 
-      return {
-        statusCode: 201,
-        headers,
-        body: JSON.stringify(show),
-      };
+        return {
+          statusCode: 201,
+          headers,
+          body: JSON.stringify(show),
+        };
+      } catch (error) {
+        console.error("POST error:", error);
+        return {
+          statusCode: 500,
+          headers,
+          body: JSON.stringify({ 
+            error: error.message,
+            details: error.toString()
+          }),
+        };
+      }
     }
 
     // PUT /shows/:id - Update a show
@@ -216,6 +230,9 @@ function createAirtableRecord(data) {
     if (data.ticket_url) fields.ticket_url = data.ticket_url;
 
     const postData = JSON.stringify({ fields });
+    
+    console.log("Creating Airtable record with:", postData);
+    console.log("Using base:", AIRTABLE_BASE_ID, "table:", AIRTABLE_TABLE_NAME);
 
     const options = {
       hostname: "api.airtable.com",
@@ -236,12 +253,15 @@ function createAirtableRecord(data) {
       res.on("end", () => {
         try {
           const json = JSON.parse(data);
+          console.log("Airtable API response:", json);
           if (res.statusCode >= 400) {
-            reject(new Error(json.error?.message || "Airtable API error"));
+            console.error("Airtable error:", json);
+            reject(new Error(json.error?.message || JSON.stringify(json)));
           } else {
             resolve(json); // Airtable returns the created record directly
           }
         } catch (e) {
+          console.error("JSON parse error:", e, "Data:", data);
           reject(e);
         }
       });
