@@ -1,31 +1,33 @@
 # Comedy Shows App
 
-A full-stack application for managing and displaying comedy shows with React frontend, Django backend, and Airtable integration.
+A full-stack application for managing and displaying comedy shows with React frontend, serverless API backend, and Airtable integration.
+
+🌐 **Live Demo:** https://silly-naiad-2a93ee.netlify.app
 
 ## Features
 
 - 📅 Display upcoming and past comedy shows
 - 🎭 Show details page with comprehensive information
 - 🔍 Filter shows by upcoming/past
-- 🌐 Full CRUD operations via REST API
+- 🌐 REST API with Netlify serverless functions
 - 📊 Airtable integration for data management
-- 🚀 Deployable to Vercel
+- 🚀 Deployed on Netlify (100% FREE)
 
 ## Tech Stack
 
 **Frontend:**
-
 - React 18
 - React Router for navigation
 - Axios for API calls
 - Vite for build tooling
 
 **Backend:**
+- Netlify Functions (Serverless)
+- Direct Airtable API integration
+- Node.js runtime
 
-- Django 4.2
-- Django REST Framework
-- Pyairtable for Airtable integration
-- SQLite database (development)
+**Database:**
+- Airtable (No-code database)
 
 ## Setup Instructions
 
@@ -98,7 +100,7 @@ npm install
 npm run dev
 ```
 
-Visit http://localhost:5173 to see the app.
+Visit http://localhost:3000 to see the app.
 
 ### API Endpoints
 
@@ -106,46 +108,35 @@ Visit http://localhost:5173 to see the app.
 - `GET /api/shows/?filter=upcoming` - List upcoming shows
 - `GET /api/shows/?filter=past` - List past shows
 - `GET /api/shows/:id/` - Get show details
-- `POST /api/shows/` - Create a new show
-- `PUT /api/shows/:id/` - Update a show
-- `DELETE /api/shows/:id/` - Delete a show
-- `POST /api/shows/sync/` - Manually sync from Airtable
 
-### Deployment to Vercel
+### Deployment to Netlify
 
-#### Prerequisites
+The app is deployed at: **https://silly-naiad-2a93ee.netlify.app**
 
-- Vercel account
-- Vercel CLI: `npm i -g vercel`
+#### Deploy Your Own
 
-#### Steps
+1. **Fork this repository** on GitHub
 
-1. **Configure Environment Variables in Vercel:**
+2. **Sign up at Netlify**: https://app.netlify.com
 
-   ```bash
-   vercel env add DJANGO_SECRET_KEY
-   vercel env add AIRTABLE_API_KEY
-   vercel env add AIRTABLE_BASE_ID
-   vercel env add AIRTABLE_TABLE_NAME
-   ```
+3. **Import your project**:
+   - Click "Add new site" → "Import an existing project"
+   - Choose "Deploy with GitHub"
+   - Select your forked repository
 
-2. **Deploy:**
+4. **Add Environment Variables** in Netlify dashboard:
+   - `AIRTABLE_API_KEY` - Your Airtable personal access token
+   - `AIRTABLE_BASE_ID` - Your Airtable base ID
+   - `AIRTABLE_TABLE_NAME` - `Shows`
 
-   ```bash
-   vercel --prod
-   ```
+5. **Deploy** - Netlify will automatically build and deploy
 
-3. **Important Notes:**
-   - The `vercel.json` configuration handles both frontend and backend routing
-   - Backend runs as serverless functions
-   - Static files are served from the `dist` directory
-   - Django migrations need to be run manually or set up in a build script
+#### How It Works
 
-#### Alternative: Deploy via Vercel Dashboard
-
-1. Import your GitHub repository
-2. Add environment variables in project settings
-3. Deploy
+- Frontend built with Vite and served as static files
+- Backend runs as Netlify serverless functions
+- Data fetched directly from Airtable
+- All hosted on Netlify's free tier
 
 ## Project Structure
 
