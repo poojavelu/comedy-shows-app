@@ -1,0 +1,16 @@
+node_modules
+.git
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env
+venv
+*.log
+db.sqlite3
+.DS_Store
+.env
+.env.local
+api/venv
+api/db.sqlite3
