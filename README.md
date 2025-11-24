@@ -6,19 +6,28 @@ A React application for browsing and managing comedy shows with serverless backe
 
 ### Original Requirements
 
-- ✅ Display 3 upcoming comedy shows with title, date/time, location, and description
-- ✅ Show details page for each comedy show
-- ✅ Filters for "Upcoming" vs "Past" shows
-- ✅ Python API endpoints for CRUD operations on shows
-- ✅ Email functionality to send invitations to guests via button click
-- ✅ Airtable form integration for show tickets
+Create a react application that displays 3 upcoming comedy shows with the following:
+
+- Show title, date/time, and location
+- A short description
+- A details page
+- Include filters for “Upcoming” vs “Past” shows
+- Create 2 python API endpoints to back the react application
+  - One to perform CRUD operations on the show object
+  - The other hydrate and send emails to guests (admin@comedyuo.com) from the react app at the click of a button
+- Build a site using a no code tool with a link to the shows tickets
+
+Deliverable:
+Upload to Vercel/Netlify and share the live link + GitHub repo
+
+Email template to hydrate
 
 ### Additional Features
 
-- 🎪 **Hero Carousel** - Auto-activates when > 6 shows
-- 🔐 **Admin Panel** - Full CRUD operations at `/manage-shows`
-- 📧 **Email Invitations** - Personalized emails with show details via SendGrid
-- 🎨 **Clean UI** - White theme with outlined buttons
+- **Hero Carousel** - Auto-activates when > 6 shows
+- **Admin Panel** - Full CRUD operations at `/manage-shows`
+- **Email Invitations** - Personalized emails with show details via SendGrid
+- **Clean UI** - White theme with outlined buttons
 
 ### Tech Stack
 
@@ -71,3 +80,36 @@ A React application for browsing and managing comedy shows with serverless backe
    ```bash
    netlify functions:serve --port 9999
    ```
+
+## Hosted Website
+
+The website is hosted at https://golden-cheesecake-8c6b34.netlify.app
+
+### Dashboard Page
+
+#### Upcoming Shows
+
+![alt text](images/upcoming_shows.png)
+
+#### Past Shows
+
+![alt text](images/past_shows.png)
+
+#### Show Details and Send Invitation
+
+![alt text](images/show_details.png)
+Currently, the invitation is sent to admin@comedyuo.com
+
+### Admin Dashboard
+
+#### Shows List
+
+![alt text](images/admin_shows_list.png)
+
+#### Edit and Delete Show
+
+![alt text](images/edit_show.png)
+
+#### Create Show
+
+![alt text](images/create_show.png)
