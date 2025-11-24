@@ -48,7 +48,7 @@ function ShowDetails() {
 
     try {
       await axios.post(`${API_BASE_URL}/.netlify/functions/send-email`, {
-        to_email: 'poojavelu23@gmail.com',
+        to_email: 'admin@comedyuo.com',
         show_data: {
           title: show.title,
           date_time: show.date_time,
@@ -63,7 +63,7 @@ function ShowDetails() {
 
       setEmailMessage({ 
         type: 'success', 
-        text: 'Invitation sent successfully to poojavelu23@gmail.com!' 
+        text: 'Invitation sent successfully to guests!' 
       })
       
       setTimeout(() => {
@@ -90,6 +90,14 @@ function ShowDetails() {
       </button>
       
       <div className="details-card">
+        <div className="featured-image">
+          <img 
+            src="/comedy-audience.png" 
+            alt="Comedy Show" 
+            className="show-image"
+          />
+        </div>
+        
         <h1>{show.title}</h1>
         
         <div className="details-info">

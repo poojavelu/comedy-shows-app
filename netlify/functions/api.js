@@ -119,9 +119,9 @@ exports.handler = async (event, context) => {
         return {
           statusCode: 500,
           headers,
-          body: JSON.stringify({ 
+          body: JSON.stringify({
             error: error.message,
-            details: error.toString()
+            details: error.toString(),
           }),
         };
       }
@@ -230,13 +230,15 @@ function createAirtableRecord(data) {
     if (data.ticket_url) fields.ticket_url = data.ticket_url;
 
     const postData = JSON.stringify({ fields });
-    
+
     console.log("Creating Airtable record with:", postData);
     console.log("Using base:", AIRTABLE_BASE_ID, "table:", AIRTABLE_TABLE_NAME);
 
     const options = {
       hostname: "api.airtable.com",
-      path: `/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_TABLE_NAME)}`,
+      path: `/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(
+        AIRTABLE_TABLE_NAME
+      )}`,
       method: "POST",
       headers: {
         Authorization: `Bearer ${AIRTABLE_API_KEY}`,

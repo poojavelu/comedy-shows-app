@@ -1,12 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { API_BASE_URL } from '../config'
 
-function AdminPanel() {
+function AdminPanel({ allShows, onShowsChange }) {
   const navigate = useNavigate()
   const [view, setView] = useState('list') // 'list', 'create', 'edit'
-  const [shows, setShows] = useState([])
   const [selectedShow, setSelectedShow] = useState(null)
   const [formData, setFormData] = useState({
     title: '',
@@ -19,21 +18,6 @@ function AdminPanel() {
   })
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState({ type: '', text: '' })
-
-  useEffect(() => {
-    if (view === 'list') {
-      fetchShows()
-    }
-  }, [view])
-
-  const fetchShows = async () => {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/api/shows/`)
-      setShows(response.data.results || [])
-    } catch (error) {
-      setMessage({ type: 'error', text: 'Failed to fetch shows' })
-    }
-  }
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -79,7 +63,6 @@ function AdminPanel() {
   const handleBackToList = () => {
     resetForm()
     setView('list')
-    fetchShows()
   }
 
   const handleSubmit = async (e) => {
@@ -100,6 +83,9 @@ function AdminPanel() {
         await axios.put(`${API_BASE_URL}/api/shows/${selectedShow.id}/`, dataToSend)
         setMessage({ type: 'success', text: 'Show updated successfully!' })
       }
+
+      // Refetch shows after create/update
+      await onShowsChange()
 
       setTimeout(() => {
         handleBackToList()
@@ -125,6 +111,9 @@ function AdminPanel() {
     try {
       await axios.delete(`${API_BASE_URL}/api/shows/${selectedShow.id}/`)
       setMessage({ type: 'success', text: 'Show deleted successfully!' })
+      
+      // Refetch shows after delete
+      await onShowsChange()
       
       setTimeout(() => {
         handleBackToList()
@@ -152,49 +141,69 @@ function AdminPanel() {
   }
 
   return (
-    <div className="admin-panel">
-      <button onClick={() => navigate('/')} className="back-button">
-        ← Back to Shows
-      </button>
-
-      <div className="admin-card">
-        <h1>Admin Panel</h1>
-
-        {view === 'list' && (
-          <div className="admin-list-view">
-            <div className="admin-header">
-              <h2>Manage Shows</h2>
-              <button onClick={handleCreateClick} className="create-button">
-                + Create New Show
-              </button>
-            </div>
-
-            {shows.length === 0 ? (
-              <p className="no-shows">No shows available. Create your first show!</p>
-            ) : (
-              <div className="shows-grid">
-                {shows.map((show) => (
-                  <div 
-                    key={show.id} 
-                    className="admin-show-card"
-                    onClick={() => handleShowClick(show)}
-                  >
-                    <h3>{show.title}</h3>
-                    <p className="show-date">{formatDateTime(show.date_time)}</p>
-                    <p className="show-location">📍 {show.location}</p>
-                    {show.comedian && <p className="show-comedian">🎤 {show.comedian}</p>}
-                  </div>
-                ))}
-              </div>
-            )}
+    <div className="shows-container">
+      {view === 'list' && (
+        <>
+          <div className="header-section">
+            <button onClick={handleCreateClick} className="create-button">
+              + Create New Show
+            </button>
           </div>
-        )}
 
-        {(view === 'create' || view === 'edit') && (
-          <div className="admin-form-view">
-            <div className="form-header">
-              <button onClick={handleBackToList} className="back-link">
-                ← Back to List
+          {allShows.length === 0 ? (
+            <div className="no-shows-container">
+              <p className="no-shows">No shows available. Create your first show!</p>
+            </div>
+          ) : (
+            <div className="shows-grid">
+              {allShows.map((show) => (
+                <div 
+                  key={show.id} 
+                  className="show-card"
+                  onClick={() => handleShowClick(show)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <div className="show-card-header">
+                    <h2>{show.title}</h2>
+                  </div>
+                  <div className="show-card-body">
+                    <div className="show-info">
+                      <p className="date-time">
+                        <span className="icon">📅</span>
+                        {formatDateTime(show.date_time)}
+                      </p>
+                      <p className="location">
+                        <span className="icon">📍</span>
+                        {show.location}
+                      </p>
+                      {show.comedian && (
+                        <p className="comedian">
+                          <span className="icon">🎤</span>
+                          {show.comedian}
+                        </p>
+                      )}
+                    </div>
+                    {show.description && (
+                      <p className="description">{show.description}</p>
+                    )}
+                  </div>
+                  <div className="show-card-footer">
+                    <div className="details-link">
+                      Edit Show →
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
+      )}
+
+      {(view === 'create' || view === 'edit') && (
+        <div className="admin-form-view">
+          <div className="form-header">
+            <button onClick={handleBackToList} className="back-link">
+              ← Back to List
               </button>
               <h2>{view === 'create' ? 'Create New Show' : 'Edit Show'}</h2>
             </div>
@@ -318,7 +327,6 @@ function AdminPanel() {
             </form>
           </div>
         )}
-      </div>
     </div>
   )
 }

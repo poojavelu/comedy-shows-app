@@ -1,32 +1,44 @@
-import { useState, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import axios from 'axios'
-import { API_BASE_URL } from '../config'
 
-function ShowsList() {
-  const [shows, setShows] = useState([])
+function ShowsList({ allShows, loading }) {
   const [filter, setFilter] = useState('upcoming')
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const carouselRef = useRef(null)
+
+  const getFilteredShows = () => {
+    const now = new Date()
+    
+    if (filter === 'upcoming') {
+      return allShows.filter(show => new Date(show.date_time) >= now)
+    } else if (filter === 'past') {
+      return allShows.filter(show => new Date(show.date_time) < now)
+    }
+    return allShows
+  }
+
+  const filteredShows = getFilteredShows()
+  const showCarousel = filteredShows.length > 6
+
+  const nextSlide = () => {
+    setCurrentIndex((prev) => 
+      prev + 1 >= filteredShows.length ? 0 : prev + 1
+    )
+  }
+
+  const prevSlide = () => {
+    setCurrentIndex((prev) => 
+      prev - 1 < 0 ? filteredShows.length - 1 : prev - 1
+    )
+  }
+
+  const goToSlide = (index) => {
+    setCurrentIndex(index)
+  }
 
   useEffect(() => {
-    fetchShows()
+    setCurrentIndex(0)
   }, [filter])
-
-  const fetchShows = async () => {
-    try {
-      setLoading(true)
-      const response = await axios.get(`${API_BASE_URL}/api/shows/?filter=${filter}`)
-      // Django REST Framework returns paginated data with 'results' array
-      setShows(response.data.results || response.data)
-      setError(null)
-    } catch (err) {
-      setError('Failed to fetch shows')
-      console.error(err)
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const formatDateTime = (dateString) => {
     const date = new Date(dateString)
@@ -41,10 +53,24 @@ function ShowsList() {
   }
 
   if (loading) return <div className="loading">Loading shows...</div>
-  if (error) return <div className="error">{error}</div>
 
   return (
     <div className="shows-container">
+      {/* Hero Section */}
+      <div className="hero-section">
+        <div className="hero-content">
+          <img 
+            src="/comedy-audience.png" 
+            alt="Comedy Show" 
+            className="hero-image"
+          />
+          <div className="hero-overlay">
+            <h1 className="hero-title">LAUGH OUT LOUD</h1>
+            <p className="hero-subtitle">Your Backstage Pass to Comedy Gold</p>
+          </div>
+        </div>
+      </div>
+      
       <div className="header-section">
         <div className="filter-buttons">
           <button
@@ -60,30 +86,109 @@ function ShowsList() {
             Past Shows
           </button>
         </div>
-        <Link to="/admin" className="admin-link">
-          🛠️ Admin Panel
-        </Link>
       </div>
 
-      <div className="shows-grid">
-        {shows.length === 0 ? (
+      {filteredShows.length === 0 ? (
+        <div className="no-shows-container">
           <p className="no-shows">No {filter} shows found</p>
-        ) : (
-          shows.map((show) => (
-            <div key={show.id} className="show-card">
-              <h2>{show.title}</h2>
-              <div className="show-info">
-                <p className="date-time">📅 {formatDateTime(show.date_time)}</p>
-                <p className="location">📍 {show.location}</p>
-              </div>
-              <p className="description">{show.description}</p>
-              <Link to={`/show/${show.id}`} className="details-link">
-                View Details →
-              </Link>
+        </div>
+      ) : showCarousel ? (
+        <div className="carousel-container">
+          <button className="carousel-button prev" onClick={prevSlide} aria-label="Previous show">
+            ‹
+          </button>
+          
+          <div className="carousel-wrapper" ref={carouselRef}>
+            <div 
+              className="carousel-track"
+              style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+            >
+              {filteredShows.map((show) => (
+                <div key={show.id} className="carousel-slide">
+                  <div className="show-card">
+                    <div className="show-card-header">
+                      <h2>{show.title}</h2>
+                    </div>
+                    <div className="show-card-body">
+                      <div className="show-info">
+                        <p className="date-time">
+                          <span className="icon">📅</span>
+                          {formatDateTime(show.date_time)}
+                        </p>
+                        <p className="location">
+                          <span className="icon">📍</span>
+                          {show.location}
+                        </p>
+                        {show.comedian && (
+                          <p className="comedian">
+                            <span className="icon">🎤</span>
+                            {show.comedian}
+                          </p>
+                        )}
+                      </div>
+                      <p className="description">{show.description}</p>
+                    </div>
+                    <div className="show-card-footer">
+                      <Link to={`/show/${show.id}`} className="details-link">
+                        View Details →
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))
-        )}
-      </div>
+          </div>
+
+          <button className="carousel-button next" onClick={nextSlide} aria-label="Next show">
+            ›
+          </button>
+
+          <div className="carousel-dots">
+            {filteredShows.map((_, index) => (
+              <button
+                key={index}
+                className={`dot ${index === currentIndex ? 'active' : ''}`}
+                onClick={() => goToSlide(index)}
+                aria-label={`Go to slide ${index + 1}`}
+              />
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className="shows-grid">
+          {filteredShows.map((show) => (
+            <div key={show.id} className="show-card">
+              <div className="show-card-header">
+                <h2>{show.title}</h2>
+              </div>
+              <div className="show-card-body">
+                <div className="show-info">
+                  <p className="date-time">
+                    <span className="icon">📅</span>
+                    {formatDateTime(show.date_time)}
+                  </p>
+                  <p className="location">
+                    <span className="icon">📍</span>
+                    {show.location}
+                  </p>
+                  {show.comedian && (
+                    <p className="comedian">
+                      <span className="icon">🎤</span>
+                      {show.comedian}
+                    </p>
+                  )}
+                </div>
+                <p className="description">{show.description}</p>
+              </div>
+              <div className="show-card-footer">
+                <Link to={`/show/${show.id}`} className="details-link">
+                  View Details →
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

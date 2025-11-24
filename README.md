@@ -1,206 +1,73 @@
 # Comedy Shows App
 
-A full-stack application for managing and displaying comedy shows with React frontend, serverless API backend, and Airtable integration.
-
-🌐 **Live Demo:** https://silly-naiad-2a93ee.netlify.app
+A React application for browsing and managing comedy shows with serverless backend, **Airtable** database, and **SendGrid** email integration.
 
 ## Features
 
-- 📅 Display upcoming and past comedy shows
-- 🎭 Show details page with comprehensive information
-- 🔍 Filter shows by upcoming/past
-- 🌐 REST API with Netlify serverless functions
-- 📊 Airtable integration for data management
-- 🚀 Deployed on Netlify (100% FREE)
+### Original Requirements
 
-## Tech Stack
+- ✅ Display 3 upcoming comedy shows with title, date/time, location, and description
+- ✅ Show details page for each comedy show
+- ✅ Filters for "Upcoming" vs "Past" shows
+- ✅ Python API endpoints for CRUD operations on shows
+- ✅ Email functionality to send invitations to guests via button click
+- ✅ Airtable form integration for show tickets
 
-**Frontend:**
+### Additional Features
 
-- React 18
-- React Router for navigation
-- Axios for API calls
-- Vite for build tooling
+- 🎪 **Hero Carousel** - Auto-activates when > 6 shows
+- 🔐 **Admin Panel** - Full CRUD operations at `/manage-shows`
+- 📧 **Email Invitations** - Personalized emails with show details via SendGrid
+- 🎨 **Clean UI** - White theme with outlined buttons
 
-**Backend:**
+### Tech Stack
 
-- Netlify Functions (Serverless)
-- Direct Airtable API integration
-- Node.js runtime
+- **Frontend:** React 18 + Vite
+- **Backend:** Netlify Serverless Functions (Node.js)
+- **Database:** Airtable
+- **Email Service:** SendGrid
+- **Deployment:** Netlify
 
-**Database:**
+> **Note:** Other Navigation links in the header are placeholders and not yet configured. They may be implemented in future updates.
 
-- Airtable (No-code database)
-
-## Setup Instructions
+## Running the App Locally
 
 ### Prerequisites
 
-- Node.js (v16 or higher)
-- Python 3.9 or higher
+- Node.js 18+
 - Airtable account with API key
+- SendGrid account with API key
 
-### Airtable Setup
+### Setup
 
-1. Create an Airtable base
-2. Create a table named "Shows" with the following fields:
-   - `title` (Single line text)
-   - `date_time` (Date with time)
-   - `location` (Single line text)
-   - `description` (Long text)
-   - `comedian` (Single line text) - Optional
-   - `ticket_price` (Number) - Optional
-   - `ticket_url` (URL) - Optional
-3. Get your API key from https://airtable.com/account
-4. Get your Base ID from the API documentation page
+1. **Clone and install dependencies:**
 
-### Local Development
+   ```bash
+   git clone <your-repo-url>
+   cd comedy-shows-app
+   npm install
+   npm install -g netlify-cli
+   ```
 
-#### Backend Setup
+2. **Create `.env` file** in root directory:
 
-```bash
-# Navigate to api directory
-cd api
+   ```env
+   AIRTABLE_API_KEY=your_airtable_personal_access_token
+   AIRTABLE_BASE_ID=your_airtable_base_id
+   AIRTABLE_TABLE_NAME=Shows
+   SENDGRID_API_KEY=your_sendgrid_api_key
+   ```
 
-# Create virtual environment
-python -m venv venv
+3. **Run the application** (requires 2 terminals):
 
-# Activate virtual environment
-# On macOS/Linux:
-source venv/bin/activate
-# On Windows:
-# venv\Scripts\activate
+   **Terminal 1 - Frontend:**
 
-# Install dependencies
-pip install -r requirements.txt
+   ```bash
+   npm run dev
+   ```
 
-# Create .env file in the api directory
-cat > .env << EOL
-DJANGO_SECRET_KEY=your-secret-key-here
-DEBUG=True
-AIRTABLE_API_KEY=your-airtable-api-key
-AIRTABLE_BASE_ID=your-airtable-base-id
-AIRTABLE_TABLE_NAME=Shows
-EOL
+   **Terminal 2 - Backend Functions:**
 
-# Run migrations
-python manage.py migrate
-
-# Create superuser (optional, for admin panel)
-python manage.py createsuperuser
-
-# Run development server
-python manage.py runserver
-```
-
-#### Frontend Setup
-
-```bash
-# From project root
-npm install
-
-# Run development server
-npm run dev
-```
-
-Visit http://localhost:3000 to see the app.
-
-### API Endpoints
-
-- `GET /api/shows/` - List all shows
-- `GET /api/shows/?filter=upcoming` - List upcoming shows
-- `GET /api/shows/?filter=past` - List past shows
-- `GET /api/shows/:id/` - Get show details
-
-### Deployment to Netlify
-
-The app is deployed at: **https://silly-naiad-2a93ee.netlify.app**
-
-#### Deploy Your Own
-
-1. **Fork this repository** on GitHub
-
-2. **Sign up at Netlify**: https://app.netlify.com
-
-3. **Import your project**:
-
-   - Click "Add new site" → "Import an existing project"
-   - Choose "Deploy with GitHub"
-   - Select your forked repository
-
-4. **Add Environment Variables** in Netlify dashboard:
-
-   - `AIRTABLE_API_KEY` - Your Airtable personal access token
-   - `AIRTABLE_BASE_ID` - Your Airtable base ID
-   - `AIRTABLE_TABLE_NAME` - `Shows`
-
-5. **Deploy** - Netlify will automatically build and deploy
-
-#### How It Works
-
-- Frontend built with Vite and served as static files
-- Backend runs as Netlify serverless functions
-- Data fetched directly from Airtable
-- All hosted on Netlify's free tier
-
-## Project Structure
-
-```
-comedy-shows-app/
-├── api/                      # Django backend
-│   ├── comedy_api/          # Django project settings
-│   │   ├── settings.py
-│   │   ├── urls.py
-│   │   └── wsgi.py
-│   ├── shows/               # Shows app
-│   │   ├── models.py
-│   │   ├── views.py
-│   │   ├── serializers.py
-│   │   ├── airtable_service.py
-│   │   └── urls.py
-│   ├── manage.py
-│   └── requirements.txt
-├── src/                     # React frontend
-│   ├── components/
-│   │   ├── ShowsList.jsx
-│   │   └── ShowDetails.jsx
-│   ├── App.jsx
-│   ├── main.jsx
-│   └── App.css
-├── index.html
-├── package.json
-├── vite.config.js
-├── vercel.json
-└── README.md
-```
-
-## Usage
-
-### Adding Shows
-
-Shows are managed through Airtable. Add records to your Airtable base, and they will automatically sync when the API is called.
-
-You can also use the Django admin panel:
-
-1. Run `python manage.py createsuperuser`
-2. Visit http://localhost:8000/admin
-3. Add shows manually
-
-### Manual Sync
-
-Trigger a manual sync from Airtable:
-
-```bash
-curl -X POST http://localhost:8000/api/shows/sync/
-```
-
-## Troubleshooting
-
-- **CORS errors**: Check that `CORS_ALLOW_ALL_ORIGINS = True` in settings.py
-- **Airtable connection errors**: Verify API key and Base ID
-- **Date formatting issues**: Ensure dates in Airtable include time
-- **Build errors on Vercel**: Check Python version and dependencies
-
-## License
-
-MIT
+   ```bash
+   netlify functions:serve --port 9999
+   ```
